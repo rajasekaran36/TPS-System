@@ -24,14 +24,19 @@ void deposit_account(account* an_account, int amount){
     display_account(an_account);
 }
 void withdraw_account(account* an_account, int amount){
-    an_account->balance -= amount;
-    printf("The amount %d is debited from the account\n",amount);
+    if(amount<=an_account->balance){
+        an_account->balance -= amount;
+        printf("The amount %d is debited from the account\n",amount);
+    }
+    else{
+        printf("Request Denied: Due to Insufficient Balance\n");
+    }
     display_account(an_account);
 }
 int main(){
     account* an_account = create_account(1,"raja");
     display_account(an_account);
     deposit_account(an_account, 1000);
-    withdraw_account(an_account,500);
+    withdraw_account(an_account,1500);
     return 0;
 }
