@@ -64,8 +64,16 @@ int main(){
         an_account = create_account(1,"raja");
     }
     display_account(an_account);
-    deposit_account(an_account, 1000);
-    withdraw_account(an_account,500);
-    save_account(an_account);
+    int option = 0;
+    do{
+        printf("1.Display Account\n"
+               "2.Deposit Account\n"
+               "3.WithDraw Account\n"
+               "4.Exit\n"
+               "Enter your choice: ");
+        scanf("%d",&option);
+        
+    }while(option<=5);
+
     return 0;
 }
