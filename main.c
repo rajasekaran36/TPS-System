@@ -6,11 +6,15 @@ typedef struct {
     char name[20];
     float balance;
 }account;
+account* create_account(int number, char* name){
+    account* new_account = (account*)malloc(sizeof(account));
+    new_account->number = 1;
+    strcpy(new_account->name, name);
+    new_account->balance = 0.0;
+    return new_account;
+}
 int main(){
-    account* an_account = (account*)malloc(sizeof(account));
-    an_account->number = 1;
-    strcpy(an_account->name, "raja");
-    an_account->balance = 0.0;
+    account* an_account = create_account(1,"raja");
 
     printf("Account No: %d\n", an_account->number);
     printf("Name      : %s\n", an_account->name);
