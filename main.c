@@ -66,6 +66,7 @@ int main(){
     display_account(an_account);
     int option = 0;
     do{
+        int amount = 0;
         printf("1.Display Account\n"
                "2.Deposit Account\n"
                "3.WithDraw Account\n"
@@ -73,7 +74,29 @@ int main(){
                "Enter your choice: ");
         scanf("%d",&option);
         
-    }while(option<=5);
+        switch(option){
+            case 1:
+            display_account(an_account);
+            break;
+            
+            case 2:
+            
+            printf("Enter amount to be deposited: ");
+            scanf("%d", &amount);
+            deposit_account(an_account, amount);
+            break;
+
+            case 3:
+            printf("Enter amount to be withdrawn: ");
+            scanf("%d", &amount);
+            withdraw_account(an_account, amount);
+            break;
+
+            case 4:
+            save_account(an_account);
+            break;
+        }
+    }while(option<=3);
 
     return 0;
 }
