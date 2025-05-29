@@ -33,10 +33,39 @@ void withdraw_account(account* an_account, int amount){
     }
     display_account(an_account);
 }
+int is_file_empty(){
+    int size = 0;
+    FILE* fp = fopen("bank.dat","rb");
+    fseek(fp,0,SEEK_END);
+    size = ftell(fp);
+    fclose(fp);
+    return size;
+}
+void save_account(account* an_account){
+    FILE* fp = fopen("bank.dat","wb");
+    fwrite(an_account,sizeof(account),1,fp);
+    fclose(fp);
+    printf("Account details saved to file (bank.dat)\n");
+}
+account* load_account(){
+    FILE* fp = fopen("bank.dat","rb");
+    account* an_account = (account*)malloc(sizeof(account));
+    fread(an_account,sizeof(account),1,fp);
+    fclose(fp);
+    printf("Account details fetched from file (bank.dat)\n");
+    return an_account;
+}
 int main(){
-    account* an_account = create_account(1,"raja");
+    account* an_account = NULL;
+    if(is_file_empty()!=0){
+        an_account = load_account();
+    }
+    else{
+        an_account = create_account(1,"raja");
+    }
     display_account(an_account);
     deposit_account(an_account, 1000);
-    withdraw_account(an_account,1500);
+    withdraw_account(an_account,500);
+    save_account(an_account);
     return 0;
 }
