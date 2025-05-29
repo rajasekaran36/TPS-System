@@ -23,9 +23,15 @@ void deposit_account(account* an_account, int amount){
     printf("The amount %d is deposited in the account\n", amount);
     display_account(an_account);
 }
+void withdraw_account(account* an_account, int amount){
+    an_account->balance -= amount;
+    printf("The amount %d is debited from the account\n",amount);
+    display_account(an_account);
+}
 int main(){
     account* an_account = create_account(1,"raja");
     display_account(an_account);
     deposit_account(an_account, 1000);
+    withdraw_account(an_account,500);
     return 0;
 }
