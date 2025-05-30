@@ -6,6 +6,12 @@ typedef struct {
     char name[20];
     float balance;
 }account;
+
+typedef struct{
+    int no_of_accounts;
+    account* accounts;
+}bank;
+
 account* create_account(int number, char* name){
     account* new_account = (account*)malloc(sizeof(account));
     new_account->number = 1;
@@ -55,14 +61,18 @@ account* load_account(){
     printf("Account details fetched from file (bank.dat)\n");
     return an_account;
 }
+
+bank* load_bank(){
+    bank* a_bank = (bank*)malloc(sizeof(bank));
+    a_bank->accounts = (account*)malloc(sizeof(account)*5);
+    a_bank->accounts[0] = *(load_account());
+    return a_bank;
+}
 int main(){
-    account* an_account = NULL;
-    if(is_file_empty()!=0){
-        an_account = load_account();
-    }
-    else{
-        an_account = create_account(1,"raja");
-    }
+
+    bank* a_bank = load_bank();
+    account* an_account = &a_bank->accounts[0];
+
     display_account(an_account);
     int option = 0;
     do{
