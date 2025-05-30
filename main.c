@@ -12,12 +12,7 @@ typedef struct{
     account* accounts;
 }bank;
 
-void init(){
-    FILE* fp = fopen("bank.dat", "wb");
-    account an_account = {1,"user", 0.0};
-    fwrite(&an_account, sizeof(account),1,fp);
-    fclose(fp);
-}
+bank* a_bank = NULL;
 
 void create_account(bank* a_bank, char* name){
     a_bank->accounts = (account*)realloc(a_bank->accounts, (a_bank->no_of_accounts + 1)*sizeof(account));
@@ -67,14 +62,6 @@ void save_bank(bank* a_bank){
     fclose(fp);
     printf("Account details saved to file (bank.dat)\n");
 }
-account* load_account(){
-    FILE* fp = fopen("bank.dat","rb");
-    account* an_account = (account*)malloc(sizeof(account));
-    fread(an_account,sizeof(account),1,fp);
-    fclose(fp);
-    printf("Account details fetched from file (bank.dat)\n");
-    return an_account;
-}
 
 bank* load_bank(){
 
@@ -95,53 +82,129 @@ bank* load_bank(){
     printf("size of bank: %d\n", a_bank->no_of_accounts);
     return a_bank;
 }
-int main(){
-    //init();
-    bank* a_bank = load_bank();
-    account* an_account = &a_bank->accounts[0];
 
-    display_account(an_account);
+account* get_account(bank* a_bank, int account_no){
+    if(account_no<=a_bank->no_of_accounts){
+        return &a_bank->accounts[account_no-1];
+    }
+    return NULL;
+}
+
+void display_all_accounts(bank* a_bank){
+    account* an_account = NULL;
+    for(int i=0;i<a_bank->no_of_accounts;i++){
+        an_account = &a_bank->accounts[i];
+        printf("%d\t%s\t%2.f\n", an_account->number,an_account->name,an_account->balance);
+    }
+}
+void reset_system(){
+    FILE* fp = fopen("bank.dat", "wb");
+    fclose(fp);
+}
+
+void admin_operations(){
     int option = 0;
-    do{
-        int amount = 0;
-        printf("1.Display Account\n"
-               "2.Deposit Account\n"
-               "3.WithDraw Account\n"
-               "4.Create Account\n"
-               "5.Exit\n"
-               "Enter your choice: ");
-        scanf("%d",&option);
-        
-        switch(option){
-            case 1:
-            display_account(an_account);
-            break;
+    printf("1.Load Bank\n"
+           "2.Display All Accounts\n"
+           "3.Save Bank\n"
+           "4.System Reset\n"
+           "5.Enter your choice: ");
+    scanf("%d", &option);
+    switch(option){
+        case 1: 
+        a_bank = load_bank();
+        break;
+
+        case 2:
+        display_all_accounts(a_bank);
+        break;
+
+        case 3:
+        save_bank(a_bank);
+        break;
+
+        case 4:
+        reset_system();
+        break;
+    }
+}
+void init(){
+    if(is_file_empty()==0){
+        char name[20];
+        printf("The Bank is Empty --- Create your First Account\n");
+        a_bank = (bank*)malloc(sizeof(bank));
+        printf("Enter your name: ");
+        scanf("%s",name);
+        a_bank->accounts = (account*)malloc(sizeof(account));
+        a_bank->accounts->number = 1;
+        strcpy(a_bank->accounts->name, name);
+        a_bank->accounts->balance = 0.0;
+        a_bank->no_of_accounts = 1;
+        save_bank(a_bank);
+        init();
+    }
+    else{
+        a_bank = load_bank();
+    }
+}
+int main(){
+    init();
+    account* an_account = NULL;
+    printf("\nWELCOME TO BANK\n");
+    printf("---------------\n");
+    display_all_accounts(a_bank);
+    printf("Enter account number: ");
+    int account_no = 0;
+    scanf("%d", &account_no);
+    an_account = get_account(a_bank, account_no);
+    
+    if(an_account!=NULL){
+        int option = 0;
+        do{
+            int amount = 0;
+            printf("1.Display Account\n"
+                "2.Deposit Account\n"
+                "3.WithDraw Account\n"
+                "4.Create Account\n"
+                "5.Exit\n"
+                "Enter your choice: ");
+            scanf("%d",&option);
             
-            case 2:
-            
-            printf("Enter amount to be deposited: ");
-            scanf("%d", &amount);
-            deposit_account(an_account, amount);
-            break;
+            switch(option){
+                case 1:
+                
+                display_account(an_account);
+                break;
+                
+                case 2:
+                
+                printf("Enter amount to be deposited: ");
+                scanf("%d", &amount);
+                deposit_account(an_account, amount);
+                break;
 
-            case 3:
-            printf("Enter amount to be withdrawn: ");
-            scanf("%d", &amount);
-            withdraw_account(an_account, amount);
-            break;
+                case 3:
+                printf("Enter amount to be withdrawn: ");
+                scanf("%d", &amount);
+                withdraw_account(an_account, amount);
+                break;
 
-            case 4:
-            printf("Enter account holder name:");
-            char name[20];
-            scanf("%s",name);
-            create_account(a_bank,name);
-            break;
+                case 4:
+                printf("Enter account holder name:");
+                char name[20];
+                scanf("%s",name);
+                create_account(a_bank,name);
+                break;
 
-            case 5:
-            save_bank(a_bank);
-            break;
-        }
-    }while(option<=4);
-
+                case 5:
+                save_bank(a_bank);
+                break;
+            }
+        }while(option<=4);
+    }
+    else{
+        printf("Account not exist\n\n");
+        printf("Coninue (Y/N):");
+    }
     return 0;
 }
